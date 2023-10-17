@@ -16,6 +16,29 @@ class SecurityCheck extends Command
 
     public function handle()
     {
-        // Lógica para verificar la seguridad
+        $criticalPaths = [
+            storage_path('app'),
+            storage_path('framework'),
+            storage_path('logs'),
+          
+            
+        ];
+    
+        $vulnerablePaths = [];
+    
+        foreach ($criticalPaths as $path) {
+            if (!is_writable($path)) {
+                $vulnerablePaths[] = $path;
+            }
+        }
+    
+        if (count($vulnerablePaths) > 0) {
+            $this->error('Vulnerabilidad de seguridad encontrada: permisos de archivos inadecuados en las siguientes rutas:');
+            foreach ($vulnerablePaths as $path) {
+                $this->error('- ' . $path);
+            }
+        } else {
+            $this->info('No se encontraron vulnerabilidades de seguridad en los permisos de archivos.');
+        }
     }
 }
